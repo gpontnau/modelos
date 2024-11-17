@@ -1,35 +1,14 @@
-// Value Object para presupuesto
-class Presupuesto {
-    const monto
-    
-    method alcanzaPara(valor) = monto >= valor
-}
-
-// Criterios de diversión usando objetos
-object criterioCiudad {
-    method esDivertido(ciudad) = 
-        ciudad.tieneAtraccionesSuficientes() and ciudad.esGrande()
-}
-
-object criterioPueblo {
-    method esDivertido(pueblo) = 
-        pueblo.esAntiguo() or pueblo.esDelLitoral()
-}
-
-object criterioBalneario {
-    method esDivertido(balneario) = 
-        balneario.tienePlayaGrande() and balneario.esMarPeligroso()
-}
-
-// Clase base para lugares
+/************** PUNTO 1 ***************/
 class Lugar {
     const property nombre
-    const criterioDiversion
     
     method esDivertido() = 
-        self.tieneCantidadParDeLetras() and criterioDiversion.esDivertido(self)
+        self.tieneCantidadParDeLetras() and 
+        self.cumpleCriterioDiversion()
     
     method tieneCantidadParDeLetras() = nombre.size() % 2 == 0
+    
+    method cumpleCriterioDiversion()
     
     method esTranquilo()
 }
@@ -38,6 +17,10 @@ class Ciudad inherits Lugar {
     const property habitantes
     const property atracciones
     const property decibeles
+    
+    override method cumpleCriterioDiversion() = 
+        self.tieneAtraccionesSuficientes() and 
+        self.esGrande()
     
     override method esTranquilo() = decibeles < 20
     
@@ -50,6 +33,9 @@ class Pueblo inherits Lugar {
     const property extension
     const property anioFundacion
     const property provincia
+    
+    override method cumpleCriterioDiversion() = 
+        self.esAntiguo() or self.esDelLitoral()
     
     override method esTranquilo() = provincia == "La Pampa"
     
@@ -64,6 +50,9 @@ class Balneario inherits Lugar {
     const property marPeligroso
     const property tienePeatonal
     
+    override method cumpleCriterioDiversion() = 
+        self.tienePlayaGrande() and self.esMarPeligroso()
+    
     override method esTranquilo() = not tienePeatonal
     
     method tienePlayaGrande() = metrosPlayaPromedio > 300
@@ -71,7 +60,7 @@ class Balneario inherits Lugar {
     method esMarPeligroso() = marPeligroso
 }
 
-// Preferencias usando objetos
+/**************** PUNRO 2 ****************/
 object preferenciaTranquilidad {
     method acepta(lugar) = lugar.esTranquilo()
 }
@@ -100,6 +89,7 @@ class Persona {
     method seIriaDeVacacionesA(lugar) = preferencia.acepta(lugar)
 }
 
+/************** PUNTO 3 ***************/
 class Tour {
     const property fechaSalida
     const property cantidadPersonasRequerida
@@ -119,9 +109,11 @@ class Tour {
         }
         personasAnotadas.add(persona)
     }
-    
+
     method tienePresupuestoSuficiente(persona) =
         persona.presupuesto().alcanzaPara(montoPorPersona)
+
+    method alcanzaPara(valor) = montoPorPersona >= valor
     
     method lugaresApropiadosParaPersona(persona) =
         lugaresARecorrer.all { lugar => persona.seIriaDeVacacionesA(lugar) }
@@ -129,20 +121,12 @@ class Tour {
     method estaConfirmado() = 
         personasAnotadas.size() >= cantidadPersonasRequerida
     
-    method bajarPersona(persona) {
-        personasAnotadas.remove(persona)
-    }
-    
     method cantidadPersonas() = personasAnotadas.size()
 }
 
-// Gestor de Tours como objeto único
+/************** PUNTO 4 ***************/
 object gestorDeTours {
     const tours = []
-    
-    method agregarTour(tour) {
-        tours.add(tour)
-    }
     
     method toursPendientesDeConfirmacion() = 
         tours.filter { tour => not tour.estaConfirmado() }
