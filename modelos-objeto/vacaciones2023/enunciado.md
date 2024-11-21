@@ -7,7 +7,13 @@ Existen diferentes tipos de lugares:
 - **pueblos**: nos interesa la extensión en km2, cuándo se fundó y en qué provincia se ubica.
 - **balnearios**: son una categoría especial, conocemos los metros de playa promedio que tienen, si el mar es peligroso y si tiene peatonal.
 
-Queremos saber qué lugares son **divertidos**. Para todos los lugares, esto se da si tiene una cantidad par de letras. Además, para las ciudades, si tienen más de 3 atracciones turísticas y más de 100.000 habitantes. En el caso de los pueblos, debemos considerar además si se fundaron antes de 1800 o si son del Litoral ("Entre Ríos", "Corrientes" o "Misiones"). Y en el caso de los balnearios habrá que considerar si tiene más de 300 metros de playa y si el mar es peligroso.
+Queremos saber qué lugares son **divertidos**. 
+
+Para todos los lugares, esto se da si tiene una cantidad par de letras. 
+
+- Además, para las ciudades, si tienen más de 3 atracciones turísticas y más de 100.000 habitantes. 
+- En el caso de los pueblos, debemos considerar además si se fundaron antes de 1800 o si son del Litoral ("Entre Ríos", "Corrientes" o "Misiones"). 
+- Y en el caso de los balnearios habrá que considerar si tiene más de 300 metros de playa y si el mar es peligroso.
 
 ## Punto 2: Personas (4 puntos)
 Las personas tienen preferencias para irse de vacaciones:

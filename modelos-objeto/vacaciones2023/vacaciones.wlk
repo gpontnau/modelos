@@ -2,20 +2,17 @@
 class Lugar {
     const property nombre
     
-    method esDivertido() = 
-        self.tieneCantidadParDeLetras() and 
-        self.cumpleCriterioDiversion()
+    method esDivertido() = self.tieneCantidadParDeLetras() && self.cumpleCriterioDiversion()
     
     method tieneCantidadParDeLetras() = nombre.size() % 2 == 0
     
-    method cumpleCriterioDiversion()
-    
+    method cumpleCriterioDiversion()    
     method esTranquilo()
 }
 
 class Ciudad inherits Lugar {
     const property habitantes
-    const property atracciones
+    const property atracciones 
     const property decibeles
     
     override method cumpleCriterioDiversion() = 
@@ -34,15 +31,13 @@ class Pueblo inherits Lugar {
     const property anioFundacion
     const property provincia
     
-    override method cumpleCriterioDiversion() = 
-        self.esAntiguo() or self.esDelLitoral()
+    override method cumpleCriterioDiversion() = self.esAntiguo() || self.esDelLitoral()
     
     override method esTranquilo() = provincia == "La Pampa"
     
     method esAntiguo() = anioFundacion < 1800
     
-    method esDelLitoral() = 
-        ["Entre Ríos", "Corrientes", "Misiones"].includes(provincia)
+    method esDelLitoral() = ["Entre Ríos", "Corrientes", "Misiones"].includes(provincia)
 }
 
 class Balneario inherits Lugar {
@@ -53,7 +48,7 @@ class Balneario inherits Lugar {
     override method cumpleCriterioDiversion() = 
         self.tienePlayaGrande() and self.esMarPeligroso()
     
-    override method esTranquilo() = not tienePeatonal
+    override method esTranquilo() = not tienePeatonal // ! > not
     
     method tienePlayaGrande() = metrosPlayaPromedio > 300
     
@@ -61,6 +56,13 @@ class Balneario inherits Lugar {
 }
 
 /**************** PUNRO 2 ****************/
+class Persona {
+    var property preferencia
+    const property presupuesto
+    
+    method seIriaDeVacacionesA(lugar) = preferencia.acepta(lugar)
+}
+
 object preferenciaTranquilidad {
     method acepta(lugar) = lugar.esTranquilo()
 }
@@ -76,18 +78,12 @@ object preferenciaLugaresRaros {
 }
 
 class PreferenciaCompuesta {
-    const preferencias
+    const preferencias // falta la lista
     
     method acepta(lugar) = 
         preferencias.any { preferencia => preferencia.acepta(lugar) }
 }
 
-class Persona {
-    var property preferencia
-    const property presupuesto
-    
-    method seIriaDeVacacionesA(lugar) = preferencia.acepta(lugar)
-}
 
 /************** PUNTO 3 ***************/
 class Tour {
