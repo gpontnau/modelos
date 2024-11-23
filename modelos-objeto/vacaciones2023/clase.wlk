@@ -50,65 +50,68 @@ class Balneario inherits Lugar {
 
 
 /*  << Context >>  */
-class Persona{
+class Persona {
+    const property preferencia
+    var property presupuestoMax
 
-  var property presupuestoMaximo 
-  var property preferencia
+    method prefiere(lugar) = preferencia.acepta(lugar)
 
-  method elige(lugar) = preferencia.prefiere(lugar) 
+    // presupuestoMax se delega en persona y no en tour para hacer mas cohesivo
+    method puedePagar(monto) = monto <= presupuestoMax
 
-  method puedePagar(monto) = monto <= presupuestoMaximo
+    method eligeLugares(lugares) = lugares.all { lugar => self.prefiere(lugar) }
+
+    // method hayLugar() = integrantes.size() < cuposTotales
 }
 
 /*  << Strategy >>  strategy stateLess => no tienen estados */
 object tranquilidad {
-  method prefiere(lugar) = lugar.esTranquilo()
+    method prefiere(lugar) = lugar.esTranquilo()
 }
 
 /*  << Strategy >>  strategy stateLess => no tienen estados */
 object diversion {
-  method prefiere(lugar) = lugar.esDivertido()
+    method prefiere(lugar) = lugar.esDivertido()
 }
 
 /*  << Strategy >>  strategy stateLess => no tienen estados */
-object lugarRaro {
-  method prefiere(lugar) = lugar.nombreRaro()
+object raris {
+    method prefiere(lugar) = lugar.esRaro()
 }
 
 /*  << Strategy >>  strategy stateLess => no tienen estados */
-class PreferenciaCombinada{
-  var property preferencias =[]
-  method prefiere(lugar) = preferencias.any{preferencia => preferencia.quiereIrA(lugar)}
+object combineta {
+    const property estrategias = []
+
+    method prefiere(lugar) = estrategias.any { estrategia => estrategia.prefiere(lugar) }
 }
 
-//Punto 3
+/************** PUNTO 3 ***************/
+class Tour {
+    const property integrantes = []
+    const property destinos = []
+    const property listaEspera = []
+    const property cuposTotales
+    var property montoTour
+    const property cantidadMaxima
+    const property fechaSalida
 
+    method hayLugar() = integrantes.size() < cuposTotales
+    
+    // method bajarPersona(persoba) { integrantes.remove(persona) }
 
-class Tour{
-  const fechaSalida
-  const integrantes = []
-  const lugares
-  const montoPorPersona
-  const cantidadMaxima
-  const listaDeEspera = []
-
-//   var property personasAnotadas = []
-
-  method montoTotal() = montoPorPersona * self.cantidadDeIntegrantes()
-  method confirmado() = self.tourCompleto()
-
-  method agregarPersona(persona){
-    if (!persona.puedePagar(montoPorPersona)) {
-        throw new DomainException(message = "El costo es mayor al presupuesto")
+    method agregarPersona(persona) {
+        if (!(persona.puedePagar(montoTour))) {
+            throw new DomainException(message = "Usted esta dispuesto a pagar menos que" + montoTour)
+        }
+        if (!(persona.eligeLugares(destinos))) {
+            throw new DomainException(message = "Algun lugar no lo eligiria")
+        }
+        if (!self.hayLugar()) {
+            throw new DomainException(message = "No hay mas lugar")
+        }
+        integrantes.add(persona)
     }
-    if (!self.eligeLugares(persona)) {
-        throw new DomainException(message = "La persona no elige los lugares")
-    }
-    if (self.tourCompleto()) {
-        throw new DomainException(message = "El tour está completo. Se añade a lista de espera")
-    }
-    integrantes.add(persona)
-  }
 
   method darDeBaja(persona){
     integrantes.remove(persona)
@@ -116,11 +119,11 @@ class Tour{
   } 
 
   method agregarPersonaLista() {
-    const nuevoIntegrante = listaDeEspera.first()
-    listaDeEspera.remove(nuevoIntegrante)
+    const nuevoIntegrante = listaEspera.first()
+    listaEspera.remove(nuevoIntegrante)
     self.agregarPersona(nuevoIntegrante)
   }
-  method eligeLugares(persona) = lugares.all{lugar => persona.elige(lugar)}
+  method eligeLugares(persona) = destinos.all{lugar => persona.elige(lugar)}
   method tourCompleto() = self.cantidadDeIntegrantes() == cantidadMaxima
   method cantidadDeIntegrantes() = integrantes.size()
 
