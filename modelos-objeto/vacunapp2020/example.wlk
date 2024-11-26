@@ -1,3 +1,5 @@
+/*********** PUNTO 1/2 ***********/
+
 class Vacuna {
   // Template method para aplicación de vacunas
   method multiplicarAnticuerpos(persona) // Hook method
@@ -23,14 +25,6 @@ class Vacuna {
   }
 }
 
-object fechaReferencia {
-  // Singleton para manejar fechas fijas del sistema
-  const property fechaLarussa = new Date(day = 3, month = 3, year = 2022)
-  const property fechaInmunidosaFija = new Date(day = 5, month = 3, year = 2022)
-  
-  method hoy() = new Date()  // Método para facilitar testing
-}
-
 object paifer inherits Vacuna {
   // Multiplicador fijo de 10x
   override method multiplicarAnticuerpos(persona) {
@@ -43,12 +37,17 @@ object paifer inherits Vacuna {
     persona.otorgarInmunidadPorMeses(meses)
   }
   
-  // Extra por edad
+  // Extra por edad -- Punto 2
   override method calcularCostoExtra(persona) {
     return if(persona.edad() < 18) 400 else 100
   }
 }
 
+object calendario { // stub
+  method hoy() = new Date()
+}
+
+// Vacuna con parámetro - requiere instanciación
 class Larussa inherits Vacuna {
   const property efectoMultiplicador
   
@@ -59,10 +58,11 @@ class Larussa inherits Vacuna {
   
   // Fecha fija de inmunidad
   override method otorgarInmunidad(persona) {
-    persona.otorgarInmunidadHasta(fechaReferencia.fechaLarussa())
+    persona.otorgarInmunidadHasta(new Date(day=3, month=3, year=2022))
   }
+
   
-  // Extra proporcional al efecto
+  // Extra proporcional al efecto -- Punto 2
   override method calcularCostoExtra(persona) {
     return efectoMultiplicador * 100
   }
@@ -82,12 +82,13 @@ object astraLaVistaZeneca inherits Vacuna {
   
   // Extra por zona geográfica
   override method calcularCostoExtra(persona) {
-    const provinciasEspeciales = #{"Tierra del Fuego", "Santa Cruz", "Neuquén"}
+    const provinciasEspeciales = ["Tierra del Fuego", "Santa Cruz", "Neuquén"]
     return if(provinciasEspeciales.contains(persona.provincia())) 2000 else 0
   }
 }
 
-class Combineta inherits Vacuna { // Composite
+// Composite
+class Combineta inherits Vacuna {
   const property vacunas = []
   
   // Aplica todas las vacunas
@@ -107,7 +108,8 @@ class Combineta inherits Vacuna { // Composite
   }
 }
 
-// --- Criterios.wlk ---
+
+/*********** PUNTO 3 ***********/
 // Strategy pattern para criterios de aceptación
 object cualquierosa {
   method acepta(vacuna, persona) = true
@@ -125,7 +127,7 @@ object anticuerposa {
 
 object inmunidosaFija {
   method acepta(vacuna, persona) {
-    return vacuna.calcularInmunidad(persona) > fechaReferencia.fechaInmunidosaFija()
+    return vacuna.calcularInmunidad(persona) > new Date(day=5, month=3, year=2022)
   }
 }
 
@@ -133,13 +135,14 @@ class InmunidosaVariable {
   const property mesesRequeridos
   
   method acepta(vacuna, persona) {
-    const fechaRequerida = fechaReferencia.hoy()
+    const fechaRequerida = calendario.hoy()
     fechaRequerida.plusMonths(mesesRequeridos)
     return vacuna.calcularInmunidad(persona) > fechaRequerida
   }
 }
 
-// --- Personas.wlk ---
+
+/*********** PUNTO 4/5 ***********/
 class Persona {
   const property nombre
   const property edad
@@ -160,7 +163,7 @@ class Persona {
   
   // Métodos de efecto para inmunidad
   method otorgarInmunidadPorMeses(meses) {
-    const fecha = fechaReferencia.hoy()
+    const fecha = calendario.hoy()
     fecha.plusMonths(meses)
     inmunidadHasta = fecha
   }
@@ -185,16 +188,13 @@ class Persona {
   }
 }
 
-// --- PlanVacunacion.wlk ---
+// Ejemplo de uso
 object planVacunacion {
-  // Catálogo de vacunas disponibles
-  const vacunasDisponibles = [
-    paifer,
-    new Larussa(efectoMultiplicador = 5),
-    new Larussa(efectoMultiplicador = 2),
-    astraLaVistaZeneca,
-    new Combineta(vacunas = [new Larussa(efectoMultiplicador = 2), paifer])
-  ]
+  const larussa5 = new Larussa(efectoMultiplicador = 5)
+  const larussa2 = new Larussa(efectoMultiplicador = 2)
+  const combinetaEspecial = new Combineta(vacunas = [larussa2, paifer])
+  
+  const vacunasDisponibles = [ paifer, larussa5, larussa2, astraLaVistaZeneca, combinetaEspecial ]
   
   // Selección de vacuna óptima
   method vacunaParaPersona(persona) {
