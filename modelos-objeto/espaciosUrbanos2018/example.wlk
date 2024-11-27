@@ -1,11 +1,4 @@
-// Calendario para manejo de fechas
-object calendario { 
-    method hoy() = new Date()
-    
-    method mismoMes(fecha1, fecha2) = fecha1.month() == fecha2.month() && fecha1.year() == fecha2.year()
-}
-
-// === CLASES BASE ===
+/************** PUNTO 1 **************/
 class EspacioUrbano {
     const property nombre
     const property superficie
@@ -13,22 +6,16 @@ class EspacioUrbano {
     var property valuacion
     var property tieneVallado
     
-    // Template Method - método de pregunta
+    // Template Method
     method esGrande() = superficie > 50 && self.condicionAdicionalGrande()
-    
-    // Primitiva para el template method - método de pregunta
+    // Primitiva para el template method 
     method condicionAdicionalGrande()
     
-    // Método de efecto
-    method registrarTrabajo(trabajo) {
-        trabajosRealizados.add(trabajo)
-    }
+    method registrarTrabajo(trabajo) { trabajosRealizados.add(trabajo) }
     
-    // Método de pregunta
-    method esDeUsoIntensivo() = self.trabajosUltimoMes().count({t => t.esHeavy()}) > 5
+    method esDeUsoIntensivo() = self.trabajosUltimoMes().count({trabajo => trabajo.esHeavy()}) > 5
     
-    // Método de pregunta
-    method trabajosUltimoMes() = trabajosRealizados.filter({t => t.esDelUltimoMes()})
+    method trabajosUltimoMes() = trabajosRealizados.filter({trabajo => trabajo.esDelUltimoMes()})
 }
 
 class Plaza inherits EspacioUrbano {
@@ -38,7 +25,7 @@ class Plaza inherits EspacioUrbano {
     
     method esVerde() = cantidadCanchas == 0
     
-    method esLimpiable() = true
+    method esLimpiable() = self.esGrande()
 }
 
 class Plazoleta inherits EspacioUrbano {
@@ -51,7 +38,7 @@ class Plazoleta inherits EspacioUrbano {
 
 class Anfiteatro inherits EspacioUrbano {
     const property capacidad
-    // const property tamañoEscenario
+    const property tamanioEscenario // medidas en metros cuadrados
     
     override method condicionAdicionalGrande() = capacidad > 500
     
@@ -62,16 +49,25 @@ class Anfiteatro inherits EspacioUrbano {
 class Multiespacio inherits EspacioUrbano {
     const property espacios = []
     
-    override method condicionAdicionalGrande() = espacios.all({e => e.esGrande()})
+    override method condicionAdicionalGrande() = espacios.all( {espacio => espacio.esGrande()} )
     
-    // Método de efecto
     method agregarEspacio(espacio) {
+        if(espacio == self) {
+            throw new DomainException(message = "Un multiespacio no puede contenerse a sí mismo")
+        }
         espacios.add(espacio)
     }
     
     method esVerde() = espacios.size() > 3
     
     method esLimpiable() = false
+}
+
+// Calendario para manejo de fechas
+object calendario { 
+    method hoy() = new Date()
+    
+    method mismoMes(fecha1, fecha2) = fecha1.month() == fecha2.month() && fecha1.year() == fecha2.year()
 }
 
 // === STRATEGY PATTERN PARA PROFESIONES ===
@@ -116,12 +112,9 @@ object cerrajero {
     
     method calcularDuracion(espacioUrbano) = if (espacioUrbano.esGrande()) 5 else 3
     
-    // Método de efecto
-    method realizarTrabajo(espacioUrbano) {
-        espacioUrbano.tieneVallado(true)
-    }
+    method realizarTrabajo(espacioUrbano) { espacioUrbano.tieneVallado(true) }
     
-    method calcularCosto(persona) = self.calcularDuracion(self) * 100
+    method calcularCosto(persona) = self.calcularDuracion(persona.espacioUrbano()) * 100
     
     method esTrabajoHeavy(trabajo) = trabajo.duracion() > 5 || trabajo.costo() > 10000
 }
@@ -146,7 +139,6 @@ object encargadoLimpieza {
     
     method calcularDuracion(espacioUrbano) = 8
     
-    // Método de efecto
     method realizarTrabajo(espacioUrbano) {
         espacioUrbano.valuacion(espacioUrbano.valuacion() + 5000)
     }
