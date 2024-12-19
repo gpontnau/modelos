@@ -1,0 +1,7 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "recu1tomado:lib"
+
+    - path: "./test"
+      component: "recu1tomado:test:recu1tomado-test"
