@@ -49,7 +49,7 @@ diferenciaDePoder mago1 = abs . ((-) (poder mago1) . poder)
 ------------------- PUNTO 3 -------------------
 
 data Academia = Academia {
-    magos          :: [Mago],
+    magos           :: [Mago],
     examenDeIngreso :: Mago -> Bool
 } deriving (Show)
 
@@ -74,6 +74,21 @@ sumatoriaEdadExpertos = sum . map edad . filter tieneMasDe10Hechizos . magos
 
 tieneMasDe10Hechizos :: Mago -> Bool
 tieneMasDe10Hechizos = (> 10) . length . hechizos
+
+magoEjemplo :: Mago
+magoEjemplo = Mago "Rincewind" 60 100 [curar 10, lanzarRayo, amnesia 2, confundir]
+
+-- > esRincewindSinHechizos magoEjemplo
+-- False
+
+-- > esÑoño magoEjemplo
+-- False
+
+-- > (cantidadDeMagosQueNoPasarian . Academia [magoEjemplo]) esRincewindSinHechizos
+-- 1
+
+-- > (sumatoriaEdadExpertos . Academia [magoEjemplo]) esRincewindSinHechizos
+-- 0
 
 ------------------- PUNTO 4 -------------------
 maximoSegun criterio valor = foldl1 (mayorSegun $ criterio valor)

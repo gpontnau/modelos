@@ -40,7 +40,7 @@ data Academia = Academia {
 }
 ```
 
-Se pide escribir el código necesario para realizar las siguientes consultas sin usar recursividad:
+Se pide escribir el código necesario para realizar las siguientes **CONSULTAS** sin usar recursividad:
 
 **a.** Saber si hay algún mago sin hechizos cuyo nombre sea "Rincewind".
 
