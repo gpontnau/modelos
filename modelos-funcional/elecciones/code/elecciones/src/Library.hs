@@ -11,10 +11,11 @@ type Deuda = Number
 type PorcentajeFelicidad = Number
 
 data Persona = Persona {
-  nombre    :: Nombre,
-  deuda     :: Deuda,
-  felicidad :: PorcentajeFelicidad,
-  esperanza :: Bool
+  nombre     :: Nombre,
+  deuda      :: Deuda,
+  felicidad  :: PorcentajeFelicidad,
+  esperanza  :: Bool,
+  estrategia :: Estrategia
 } deriving (Show, Eq)
 
 type Estrategia = Persona -> Persona -> Bool
@@ -45,10 +46,10 @@ combinado = combinaEstrategias (esperanzado True) (economico 500)
 -- Modelado del país
 paradigma :: [Persona]
 paradigma = [
-  Persona "Silvia" 1000 30 False,
-  Persona "Lara" 2000 60 True,
-  Persona "Manuel" 300 40 False,
-  Persona "Victor" 800 45 True
+    Persona "Juan" 100 50 True conformista,
+    Persona "Ana" 600 60 False (esperanzado False),
+    Persona "Pedro" 500 70 True (economico 100),
+    Persona "Laura" 200 80 False combinado
   ]
 
 -------------------------------------- PUNTO 2 --------------------------------------
@@ -87,17 +88,21 @@ martinezRaymonda = alende . yrigoyen
 
 -------------------------------------- PUNTO 4 --------------------------------------
 -- recursividad
-aceptaCandidato :: Persona -> Candidato -> Bool
-aceptaCandidato persona candidato = combinado persona (candidato persona)
-
 votarCandidatos :: Persona -> [Candidato] -> [Candidato]
-votarCandidatos _ [] = []  
-votarCandidatos _ [candidato] = [candidato] 
-votarCandidatos persona (candidato : restoCandidatos)
-    | aceptaCandidato persona candidato = candidato : votarCandidatos persona restoCandidatos
-    | otherwise                         = []
+votarCandidatos _ [] = []
+votarCandidatos persona (candidato:candidatos) 
+    | (estrategia persona persona . candidato) persona = candidato : votarCandidatos persona candidatos
+    | otherwise                                        = []
 
 -------------------------------------- PUNTO 5 --------------------------------------
 aplicarVotosCandidatos :: Persona -> [Candidato] -> Persona
 aplicarVotosCandidatos persona candidatos = 
     foldr ($) persona (votarCandidatos persona candidatos)
+
+manuel :: Persona
+manuel = Persona "Manuel" 100 50 True conformista
+
+candidatos :: [Candidato]
+candidatos = [yrigoyen, alende, alsogaray, martinezRaymonda]
+
+-- > aplicarVotosCandidatos manuel candidatos
