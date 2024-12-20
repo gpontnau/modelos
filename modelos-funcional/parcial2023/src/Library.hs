@@ -107,4 +107,30 @@ aplicarTareaSiCumple criterio aldea tarea
   | otherwise = aldea
 
 
--- b.i
+-- b.
+-- i. Tener gnomitos 3 veces asegurando comida suficiente
+tenerGnomitosSeguro :: Aldea -> Aldea
+tenerGnomitosSeguro = realizarLasQueCumplan (replicate 3 tenerGnomito) hayComidaSuficiente
+
+hayComidaSuficiente :: Aldea -> Bool
+hayComidaSuficiente aldea = comidaDisponible aldea > poblacion aldea
+
+comidaDisponible :: Aldea -> Number
+comidaDisponible = unidadesDisponibles "Comida"
+
+-- ii. Recolectar madera y lustrarla asegurando que sean valiosos
+recolectarYLustrarMaderas :: Aldea -> Aldea
+recolectarYLustrarMaderas aldea = realizarLasQueCumplan [recolectarMaderaPino aldea, lustrarMaderas] todosValiosos aldea
+
+todosValiosos :: Aldea -> Bool
+todosValiosos = all esValioso . materialesDisp
+
+recolectarMaderaPino :: Aldea -> Tarea
+recolectarMaderaPino aldea = recolectar maderaPino 30
+    where maderaPino = Material "Madera de pino" (maximaCalidadMaderas aldea)
+
+maximaCalidadMaderas :: Aldea -> Number
+maximaCalidadMaderas = maximum . map calidad . filter esMadera . materialesDisp
+
+-- esMadera :: Material -> Bool                   definida anteriormente
+-- esMadera = (== "Madera") . take 6 . nombre
