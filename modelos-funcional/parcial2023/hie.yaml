@@ -1,0 +1,7 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "parcial2023:lib"
+
+    - path: "./test"
+      component: "parcial2023:test:parcial2023-test"
