@@ -1,0 +1,7 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "harryPostre:lib"
+
+    - path: "./test"
+      component: "harryPostre:test:harryPostre-test"
