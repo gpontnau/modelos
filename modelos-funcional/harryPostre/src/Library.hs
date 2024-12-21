@@ -129,25 +129,33 @@ magoInfinito :: Mago
 magoInfinito = Mago (map diffindo [1..]) 0
 
 {-
-Parte B) Sobre consultar si un hechizo deja listos los infinitos postres:
+3B)
 
-- Sí es posible dar una respuesta cuando el hechizo tiene un comportamiento predecible:
-  1. Si el hechizo congela (temperatura = 0), sabemos que ningún postre quedará listo
-  2. Si el hechizo quita todos los sabores, sabemos que ningún postre quedará listo
-  3. Si el hechizo reduce el peso a 0 o menos, sabemos que ningún postre quedará listo
+Sí existe una consulta que puede dar respuesta en algunos casos específicos, gracias a la evaluación diferida de Haskell:
 
-- No es posible dar una respuesta cuando:
-  1. El hechizo modifica los postres de forma que no podemos predecir si quedarán listos
-  2. Necesitamos evaluar infinitos postres para saberlo
+1. Cuando el hechizo tiene un comportamiento predecible que hace imposible que los postres queden listos:
+- Si el hechizo congela (temperatura = 0), ninguno estará listo porque un postre congelado nunca está listo por definición
+- Si el hechizo quita todos los sabores, ninguno estará listo porque un postre sin sabores nunca está listo
+- Si reduce el peso a 0, ninguno estará listo porque peso 0 nunca está listo
 
-Parte C) Sobre encontrar el mejor hechizo entre infinitos hechizos:
+2. Cuando no podemos dar respuesta:
+- Si necesitamos evaluar todos los postres para saber si quedan listos
+- Si el hechizo tiene efectos que varían según el postre
+- Si no podemos predecir el estado final
 
-- Sí es posible cuando:
-  1. Existe un "techo" máximo de sabores que un hechizo puede dejar
-  2. Podemos determinar ese máximo analizando el comportamiento del hechizo
+3C)
 
-- No es posible cuando:
-  1. Los hechizos pueden agregar cantidades arbitrarias de sabores
-  2. No hay forma de determinar un máximo
-  3. Necesitamos comparar infinitos hechizos entre sí
+Solo es posible encontrar el mejor hechizo en casos donde:
+
+1. Podemos encontrar un "techo" máximo de sabores que un hechizo puede dejar
+2. Algún hechizo alcanza ese máximo
+3. Podemos demostrar que ningún otro hechizo puede superarlo
+
+No es posible encontrarlo cuando:
+1. Los hechizos pueden agregar cantidades arbitrarias de sabores
+2. No hay forma de determinar un máximo
+3. Necesitamos evaluar infinitos hechizos para comparar
+
+La evaluación diferida nos permite trabajar con listas infinitas, pero necesitamos poder 
+tomar decisiones con información finita para obtener una respuesta.
 -}
